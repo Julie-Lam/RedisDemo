@@ -13,7 +13,13 @@ namespace RedisDemo
                 .AddInteractiveServerComponents();
 
             var app = builder.Build();
+            //custom 
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetConnectionString("Redis");
+                options.InstanceName = "RedisDemo_"; //This values prepends to the key of the redis key-value pairs 
 
+            });
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
