@@ -12,7 +12,6 @@ namespace RedisDemo
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            var app = builder.Build();
             //custom 
             builder.Services.AddStackExchangeRedisCache(options =>
             {
@@ -20,6 +19,9 @@ namespace RedisDemo
                 options.InstanceName = "RedisDemo_"; //This values prepends to the key of the redis key-value pairs 
 
             });
+
+            var app = builder.Build();
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {

@@ -10,12 +10,22 @@
 
 <p>This component demonstrates showing data.</p>
 
+<button class="btn btn-primary" @onclick="LoadForecast">Load Forecast</button>
+
+@if (forecasts is null && loadLocation is null)
+{
+<p><em>Click the buutton to load the forecast!</em></p>    
+}
 @if (forecasts == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
+
+
+    <div class="h3 @isCacheData">@loadLocation
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -41,7 +51,7 @@ else
 
 @code {
     private WeatherForecast[]? forecasts;
-    private string loadLocation = ""; //source of data, e.g. redis, db
+    private string loadLocation = null; //source of data, e.g. redis, db
     private string isCacheData = "";
 
 
@@ -56,9 +66,17 @@ else
 
         if (forecasts is null)
         {
-            forecasts = GetForecastsFromDb(); 
+            forecasts = GetForecastsFromDb();
 
-            loadLocation = $"Loaded from API at {DateTime.Now}"; 
+            loadLocation = $"Loaded from API at {DateTime.Now}";
+            isCacheData = "";
+
+            await cache.SetRecordAsync(recordKey, forecasts);
+        }
+        else
+        {
+            loadLocation = $"Loaded from the cache at {DateTime.Now}";
+            isCacheData = "text-danger"; 
         }
 
     }
@@ -76,20 +94,7 @@ else
 
         return forecasts; 
     }
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     // Simulate asynchronous loading to demonstrate a loading indicator
-    //     await Task.Delay(500);
 
-    //     var startDate = DateOnly.FromDateTime(DateTime.Now);
-    //     var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-    //     forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-    //     {
-    //         Date = startDate.AddDays(index),
-    //         TemperatureC = Random.Shared.Next(-20, 55),
-    //         Summary = summaries[Random.Shared.Next(summaries.Length)]
-    //     }).ToArray();
-    // }
 
     private class WeatherForecast
     {
